@@ -11,17 +11,17 @@ namespace IoTHubReader
     public class Functions
     {
         [NoAutomaticTriggerAttribute]
-        public static async Task ProcessMethod(TextWriter log)
+        public static async Task ProcessMethod()
         {
             while (true)
             {
                 try
                 {
-                    log.WriteLine("ProcessMethod call");
+                    Console.Out.WriteLine("ProcessMethod call");
                 }
                 catch (Exception ex)
                 {
-                    log.WriteLine("Error occurred in processing pending altapay requests. Error : {0}", ex.Message);
+                    Console.Error.WriteLine("Error occurred in processing pending altapay requests. Error : {0}", ex.Message);
                 }
                 await Task.Delay(TimeSpan.FromMinutes(10));
             }
