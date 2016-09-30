@@ -13,6 +13,11 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.Azure.Devices.Client;
+using Newtonsoft.Json;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -24,10 +29,17 @@ namespace RemoteLightDevice
     public sealed partial class MainPage : Page
     {
         private static Boolean lightStatus;
+        static DeviceClient deviceClient;
+        static string iotHubUri = "remotelightcontrol.azure-devices.net";
+        static string deviceId = "simulated-device";
+        static string deviceKey = "RXyCB0EaGR8qBxj0ju5cj3wSBEHoWhkwMqdXpc9p5ow=";
+
         public MainPage()
         {
             this.InitializeComponent();
             lightStatus = false;
+            deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(deviceId, deviceKey));
+            SendDeviceToCloudMessagesAsync();
         }
 
         private void btnToggleSwitch_Toggled(object sender, RoutedEventArgs e)
@@ -39,6 +51,25 @@ namespace RemoteLightDevice
         {
             lightStatus = !lightStatus;
             light.Fill = new SolidColorBrush(lightStatus?Colors.Blue:Colors.LightGray);
+            SendDeviceToCloudMessagesAsync();
+        }
+
+        private static async void SendDeviceToCloudMessagesAsync()
+        {
+
+            var messagePayload = new
+            {
+                deviceId = deviceId,
+                lightValue = lightStatus ? 1.0 : 0.0
+            };
+
+                var messageString = JsonConvert.SerializeObject(messagePayload);
+                var message = new Message(Encoding.ASCII.GetBytes(messageString));
+
+                await deviceClient.SendEventAsync(message);
+                Debug.WriteLine("{0} > Sending message: {1}", DateTime.Now, messageString);
+
+                Task.Delay(1000).Wait();
         }
     }
 }
