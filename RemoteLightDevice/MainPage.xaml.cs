@@ -40,6 +40,7 @@ namespace RemoteLightDevice
             lightStatus = false;
             deviceClient = DeviceClient.Create(iotHubUri, new DeviceAuthenticationWithRegistrySymmetricKey(deviceId, deviceKey));
             SendDeviceToCloudMessagesAsync();
+            ReceiveC2dAsync();
         }
 
         private void btnToggleSwitch_Toggled(object sender, RoutedEventArgs e)
@@ -50,7 +51,12 @@ namespace RemoteLightDevice
         private void toogleLightStatus()
         {
             lightStatus = !lightStatus;
-            light.Fill = new SolidColorBrush(lightStatus?Colors.Blue:Colors.LightGray);
+            updateLight();
+        }
+
+        private void updateLight()
+        {
+            light.Fill = new SolidColorBrush(lightStatus ? Colors.Blue : Colors.LightGray);
             SendDeviceToCloudMessagesAsync();
         }
 
@@ -70,6 +76,28 @@ namespace RemoteLightDevice
                 Debug.WriteLine("{0} > Sending message: {1}", DateTime.Now, messageString);
 
                 Task.Delay(1000).Wait();
+        }
+
+        private async void ReceiveC2dAsync()
+        {
+            Debug.WriteLine("\nReceiving cloud to device messages from service");
+            while (true)
+            {
+                Message receivedMessage = await deviceClient.ReceiveAsync();
+                if (receivedMessage == null) continue;
+
+                var messageBytes = receivedMessage.GetBytes();
+
+                var messageData = Encoding.ASCII.GetString(messageBytes);
+
+                Debug.WriteLine("Received message: {0}", messageData);
+
+
+                lightStatus = (int.Parse(messageData.ToString()) > 0);
+                updateLight();
+
+                await deviceClient.CompleteAsync(receivedMessage);
+            }
         }
     }
 }
