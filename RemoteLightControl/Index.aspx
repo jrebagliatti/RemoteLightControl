@@ -8,6 +8,9 @@
 </head>
 <body>
     <form id="form1" runat="server">
+        <div>
+            <asp:Label runat="server" ID="lblStatus"></asp:Label>
+        </div>
     <div>
         <asp:Button runat="server" ID="btnOn" Text="On" OnClick="btnOn_Click" />
         <asp:Button runat="server" ID="btnOff" Text="Off" OnClick="btnOff_Click" />

@@ -43,6 +43,20 @@ namespace IoTHubReader
 
                 string data = Encoding.UTF8.GetString(eventData.GetBytes());
                 Console.WriteLine("Message received. Partition: {0} Data: '{1}'", partition, data);
+
+                // Write the data in a text file
+                // Set a variable to the My Documents path.
+                string filePath = Path.Combine(
+                    Environment.GetEnvironmentVariable("HOME"),
+                    @"data\lightStatus.dat");
+
+                Console.WriteLine("Writing data to {0}", filePath);
+
+                // Write the string array to a new file named "WriteLines.txt".
+                using (StreamWriter outputFile = new StreamWriter(filePath))
+                {
+                    outputFile.Write(data);
+                }
             }
         }
     }

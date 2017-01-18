@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.Devices;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,15 @@ namespace RemoteLightControl
         protected void Page_Load(object sender, EventArgs e)
         {
             serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
+            string filePath = Path.Combine(
+     Environment.GetEnvironmentVariable("HOME"),
+     @"data\lightStatus.dat");
+
+            using (StreamReader sr = new StreamReader(filePath))
+            {
+                String line = sr.ReadToEnd();
+                lblStatus.Text = line;
+            }
         }
 
         protected async void btnOn_Click(object sender, EventArgs e)
