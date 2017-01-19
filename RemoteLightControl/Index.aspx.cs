@@ -21,8 +21,8 @@ namespace RemoteLightControl
         {
             serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
             string filePath = Path.Combine(
-     Environment.GetEnvironmentVariable("HOME"),
-     @"data\lightStatus.dat");
+                Environment.GetEnvironmentVariable("HOME"),
+                @"data\lightStatus.dat");
 
             using (StreamReader sr = new StreamReader(filePath))
             {
