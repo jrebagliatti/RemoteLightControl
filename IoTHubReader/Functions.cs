@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.ServiceBus.Messaging;
 using System.Threading;
+using System.Net.Http;
+using System.Configuration;
 
 namespace IoTHubReader
 {
@@ -44,20 +46,23 @@ namespace IoTHubReader
                 string data = Encoding.UTF8.GetString(eventData.GetBytes());
                 Console.WriteLine("Message received. Partition: {0} Data: '{1}'", partition, data);
 
-                // Write the data in a text file
-                // Set a variable to the My Documents path.
-                string filePath = Path.Combine(
-                    Environment.GetEnvironmentVariable("HOME"),
-                    @"data\lightStatus.dat");
+                //float dataInt = float.Parse(data);
+                float dataInt = 1;
 
-                Console.WriteLine("Writing data to {0}", filePath);
-
-                // Write the string array to a new file named "WriteLines.txt".
-                using (StreamWriter outputFile = new StreamWriter(filePath))
-                {
-                    outputFile.Write(data);
-                }
+                await ChangeLightStatusAsync(1, dataInt > 0);
             }
+        }
+
+        private static async Task ChangeLightStatusAsync(int lightId, bool value)
+        {
+            var httpClient = new HttpClient();
+
+            var action = String.Format("{0}/{1}", value ? "TurnOn" : "TurnOff", lightId);
+            var request = ConfigurationManager.AppSettings["ChangeLightStatusEndpoint"] + action;
+
+            var response = await httpClient.PostAsync(request, null);
+
+            Console.WriteLine(response.StatusCode.ToString());
         }
     }
 }
