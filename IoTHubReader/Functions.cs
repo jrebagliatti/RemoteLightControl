@@ -57,7 +57,7 @@ namespace IoTHubReader
         {
             var httpClient = new HttpClient();
 
-            var action = String.Format("{0}/{1}", value ? "TurnOn" : "TurnOff", lightId);
+            var action = String.Format("{0}/{1}", "NotifyLightChange", lightId);
             var request = ConfigurationManager.AppSettings["ChangeLightStatusEndpoint"] + action;
 
             var response = await httpClient.PostAsync(request, null);

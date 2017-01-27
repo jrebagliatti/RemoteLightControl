@@ -9,6 +9,8 @@ namespace RemoteLightControl.Models
     {
         public int Id { get; set; }
 
+        public String DeviceId { get; set; }
+
         public String Description { get; set; }
 
         public float Value { get; set; }

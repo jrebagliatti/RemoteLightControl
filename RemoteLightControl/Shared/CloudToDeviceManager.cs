@@ -6,7 +6,7 @@ using Microsoft.Azure.Devices;
 using System.Threading.Tasks;
 using System.Text;
 
-namespace RemoteLightControl.App_Code
+namespace RemoteLightControl.Shared
 {
     public class CloudToDeviceManager
     {
@@ -18,11 +18,10 @@ namespace RemoteLightControl.App_Code
             serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
         }
 
-        private async Task SendCloudToDeviceMessageAsync(String device, String message)
+        public async Task SendCloudToDeviceMessageAsync(String device, String message)
         {
             var commandMessage = new Message(Encoding.ASCII.GetBytes(message));
             await serviceClient.SendAsync(device, commandMessage);
         }
-
     }
 }

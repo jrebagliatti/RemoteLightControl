@@ -1,7 +1,9 @@
 ﻿using RemoteLightControl.Models;
+using RemoteLightControl.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -15,8 +17,8 @@ namespace RemoteLightControl.Controllers
         {
             lights = new List<LightModel>();
 
-            lights.Add(new LightModel() { Id = 1, Description = "Light #1", Value = 0 });
-        }
+            lights.Add(new LightModel() { Id = 1, Description = "Light #1", Value = 0, DeviceId = "simulated-device" });
+            }
 
         // GET: Lights
         public ActionResult Index()
@@ -37,10 +39,21 @@ namespace RemoteLightControl.Controllers
         }
 
         [HttpPost]
-        public ActionResult TurnOn(int id)
+        public async Task<ActionResult> TurnOn(int id)
         {
+            LightModel light = lights.First(l => l.Id == id);
+            
+            CloudToDeviceManager deviceManager = new CloudToDeviceManager();
+                       
+            await deviceManager.SendCloudToDeviceMessageAsync(light.DeviceId, "1.0");
 
             return Json(new { value = 1.0 });
+        }
+
+        [HttpPost]
+        public ActionResult NotifyLightChange(int id)
+        {
+            return Json(new { success = true });
         }
 
         // POST: Lights/Create

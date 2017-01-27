@@ -156,10 +156,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Code\CloudToDeviceManager.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LightsController.cs" />
@@ -175,6 +176,7 @@
     </Compile>
     <Compile Include="Models\LightModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shared\CloudToDeviceManager.cs" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>
