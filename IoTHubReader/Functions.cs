@@ -37,27 +37,34 @@ namespace IoTHubReader
 
         private static async Task ReceiveMessagesFromDeviceAsync(string partition)
         {
+            Console.WriteLine("Starting receiver for partition {0}.", partition);
             var eventHubReceiver = eventHubClient.GetDefaultConsumerGroup().CreateReceiver(partition, DateTime.UtcNow);
+
             while (true)
             {
                 EventData eventData = await eventHubReceiver.ReceiveAsync();
                 if (eventData == null) continue;
+                try
+                {
+                    string data = Encoding.UTF8.GetString(eventData.GetBytes());
+                    Console.WriteLine("Message received. Partition: {0} Data: '{1}'", partition, data);
 
-                string data = Encoding.UTF8.GetString(eventData.GetBytes());
-                Console.WriteLine("Message received. Partition: {0} Data: '{1}'", partition, data);
+                    float dataFloat = float.Parse(data);
 
-                //float dataInt = float.Parse(data);
-                float dataInt = 1;
-
-                await ChangeLightStatusAsync(1, dataInt > 0);
+                    await ChangeLightStatusAsync(1, dataFloat);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("ERROR: Error processing message. Partition {0}, Error {1}", partition, e.ToString());
+                }
             }
         }
 
-        private static async Task ChangeLightStatusAsync(int lightId, bool value)
+        private static async Task ChangeLightStatusAsync(int lightId, Single value)
         {
             var httpClient = new HttpClient();
 
-            var action = String.Format("{0}/{1}", "NotifyLightChange", lightId);
+            var action = String.Format("{0}/{1}?value={2}", "NotifyLightChange", lightId, value);
             var request = ConfigurationManager.AppSettings["ChangeLightStatusEndpoint"] + action;
 
             var response = await httpClient.PostAsync(request, null);

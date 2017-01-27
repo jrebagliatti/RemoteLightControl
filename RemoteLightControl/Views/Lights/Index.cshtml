@@ -23,10 +23,10 @@
             // Reference the auto-generated proxy for the hub.
             var hub = $.connection.notificationsHub;
             // Create a function that the hub can call back to display messages.
-            hub.client.notifyLightChange = function (lightId, message) {
+            hub.client.notifyLightChange = function (lightId, value) {
                 // Add the message to the page.
-                console.log("Message received");
-                alert(message);
+                console.log("Message received", lightId, value);
+                $("td[data-light-id='" + lightId + "']").html(value);
             };
             // Start the connection.
             $.connection.hub.start().done(function () {
@@ -55,7 +55,7 @@
             <td>
                 @item.Description
             </td>
-            <td>
+            <td name="tdValue" data-light-id="@item.Id">
                 @item.Value
             </td>
             <td>

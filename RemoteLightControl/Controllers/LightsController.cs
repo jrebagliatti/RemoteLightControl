@@ -53,10 +53,10 @@ namespace RemoteLightControl.Controllers
         }
 
         [HttpPost]
-        public ActionResult NotifyLightChange(int id)
+        public ActionResult NotifyLightChange(int id, Single value)
         {
             var context = GlobalHost.ConnectionManager.GetHubContext<NotificationsHub>();
-            context.Clients.All.notifyLightChange(id, "1");
+            context.Clients.All.notifyLightChange(id, value);
             return Json(new { success = true });
         }
 
