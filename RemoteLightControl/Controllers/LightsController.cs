@@ -1,4 +1,6 @@
-﻿using RemoteLightControl.Models;
+﻿using Microsoft.AspNet.SignalR;
+using RemoteLightControl.Hubs;
+using RemoteLightControl.Models;
 using RemoteLightControl.Shared;
 using System;
 using System.Collections.Generic;
@@ -53,6 +55,8 @@ namespace RemoteLightControl.Controllers
         [HttpPost]
         public ActionResult NotifyLightChange(int id)
         {
+            var context = GlobalHost.ConnectionManager.GetHubContext<NotificationsHub>();
+            context.Clients.All.notifyLightChange(id, "1");
             return Json(new { success = true });
         }
 
