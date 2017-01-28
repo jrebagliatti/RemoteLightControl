@@ -9,6 +9,7 @@ using Microsoft.ServiceBus.Messaging;
 using System.Threading;
 using System.Net.Http;
 using System.Configuration;
+using Newtonsoft.Json;
 
 namespace IoTHubReader
 {
@@ -49,9 +50,15 @@ namespace IoTHubReader
                     string data = Encoding.UTF8.GetString(eventData.GetBytes());
                     Console.WriteLine("Message received. Partition: {0} Data: '{1}'", partition, data);
 
-                    float dataFloat = float.Parse(data);
+                    // Parse the data
+                    var messageDefinition = new
+                    {
+                        deviceId = "",
+                        lightValue = (Single) 0.0
+                    };
+                    var jsonResponse = JsonConvert.DeserializeAnonymousType(data, messageDefinition);
 
-                    await ChangeLightStatusAsync(1, dataFloat);
+                    await ChangeLightStatusAsync(1, jsonResponse.lightValue);
                 }
                 catch(Exception e)
                 {

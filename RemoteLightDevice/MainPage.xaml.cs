@@ -93,7 +93,7 @@ namespace RemoteLightDevice
                 Debug.WriteLine("Received message: {0}", messageData);
 
 
-                lightStatus = (int.Parse(messageData.ToString()) > 0);
+                lightStatus = (Single.Parse(messageData.ToString()) > 0);
                 updateLight();
 
                 await deviceClient.CompleteAsync(receivedMessage);
