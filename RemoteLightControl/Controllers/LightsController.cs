@@ -41,15 +41,28 @@ namespace RemoteLightControl.Controllers
         }
 
         [HttpPost]
+        public async Task<ActionResult> TurnOff(int id)
+        {
+            await UpdateLightValue(id, "0.0");
+
+            return Json(new { value = 0.0 });
+        }
+
+        [HttpPost]
         public async Task<ActionResult> TurnOn(int id)
         {
-            LightModel light = lights.First(l => l.Id == id);
-            
-            CloudToDeviceManager deviceManager = new CloudToDeviceManager();
-                       
-            await deviceManager.SendCloudToDeviceMessageAsync(light.DeviceId, "1.0");
+            await UpdateLightValue(id, "1.0");
 
             return Json(new { value = 1.0 });
+        }
+
+        private async Task UpdateLightValue(int id, String value)
+        {
+            LightModel light = lights.First(l => l.Id == id);
+
+            CloudToDeviceManager deviceManager = new CloudToDeviceManager();
+
+            await deviceManager.SendCloudToDeviceMessageAsync(light.DeviceId, value);
         }
 
         [HttpPost]

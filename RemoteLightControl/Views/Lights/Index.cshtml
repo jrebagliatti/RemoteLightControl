@@ -60,6 +60,7 @@
             </td>
             <td>
                 @Ajax.ActionLink("Turn on", "TurnOn", new { id = item.Id }, new AjaxOptions() { HttpMethod = "Post" });
+                @Ajax.ActionLink("Turn off", "TurnOff", new { id = item.Id }, new AjaxOptions() { HttpMethod = "Post" });
                 @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
                 @Html.ActionLink("Details", "Details", new { id = item.Id }) |
                 @Html.ActionLink("Delete", "Delete", new { id = item.Id })
